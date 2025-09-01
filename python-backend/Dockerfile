@@ -1,12 +1,19 @@
-# Minimal Dockerfile for the Python Qiskit service
-FROM python:3.11-slim
+# Use mambaforge to avoid building Aer on Windows hosts; installs from conda-forge
+FROM mambaorg/mambaforge:latest
 
 WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+# Copy files
+COPY . /app
 
-ENV FLASK_APP=app.py
+# Create environment and install dependencies from conda-forge
+RUN mamba install -y -c conda-forge python=3.11 qiskit flask flask-cors python-dotenv && \
+    mamba clean -afy
+
+# Expose port
 EXPOSE 5000
+
+ENV PORT=5000
+ENV PYTHONUNBUFFERED=1
+
 CMD ["python", "app.py"]

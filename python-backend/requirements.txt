@@ -1,3 +1,8 @@
 flask
 flask-cors
-qiskit
+python-dotenv
+# Qiskit packages: install if you want real quantum simulation/runtime.
+# On Windows, prefer conda (environment.yml) for Aer to avoid build issues.
+qiskit-terra
+qiskit-aer
+qiskit-ibm-runtime.
