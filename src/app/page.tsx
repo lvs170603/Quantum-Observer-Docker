@@ -13,9 +13,10 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-muted/40">
+      {/*welcome name
       <h1 className="text-2xl font-bold px-4 pt-4">
         Welcome {session.user?.name || "User"}
-      </h1>
+      </h1>*/}
       {/* ✅ Dashboard UI */}
       <ClientDashboard />
     </div>
