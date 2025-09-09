@@ -1,0 +1,5 @@
+fastapi
+uvicorn
+qiskit-ibm-runtime
+python-dotenv
+fastapi[all]

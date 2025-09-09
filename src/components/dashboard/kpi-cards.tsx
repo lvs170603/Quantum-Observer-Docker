@@ -14,28 +14,42 @@ const kpiData = [
     key: "live_jobs",
     icon: Activity,
     description: "Jobs currently running or queued",
-    format: (value: number) => value.toString(),
+    format: (value: any) => {
+      if (value === undefined || value === null) return "N/A";
+      return value.toString();
+    }
   },
   {
     title: "Avg Wait Time",
     key: "avg_wait_time",
     icon: Clock,
     description: "Average time jobs spend in queue",
-    format: (value: number) => `${Math.round(value / 60)}m ${Math.round(value % 60)}s`,
+    format: (value: any) => {
+      if (typeof value !== "number" || isNaN(value)) return "N/A";
+      const minutes = Math.floor(value / 60);
+      const seconds = Math.floor(value % 60);
+      return `${minutes}m ${seconds}s`;
+    }
   },
   {
     title: "Success Rate",
     key: "success_rate",
     icon: CheckCircle,
     description: "Percentage of jobs completed successfully",
-    format: (value: number) => `${value.toFixed(1)}%`,
+    format: (value: any) => {
+      if (typeof value !== "number" || isNaN(value)) return "N/A";
+      return `${value.toFixed(1)}%`;
+    }
   },
   {
     title: "Open Sessions",
     key: "open_sessions",
     icon: Users,
     description: "Active user sessions",
-    format: (value: number) => value.toString(),
+    format: (value: any) => {
+      if (value === undefined || value === null) return "N/A";
+      return value.toString();
+    }
   },
 ];
 

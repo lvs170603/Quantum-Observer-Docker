@@ -57,23 +57,70 @@ export default function ClientDashboard() {
         setMetrics(mockMetrics)
         setChartData(mockChartData)
       } else {
-        toast({
-          title: "Live Mode",
-          description: "Live data fetching is not implemented. Using demo data.",
-        })
-        setJobs(mockJobs)
-        setBackends(mockBackends)
-        setMetrics(mockMetrics)
-        setChartData(mockChartData)
+        try {
+          const res = await fetch("http://127.0.0.1:8000/api/jobs");
+          if (!res.ok) throw new Error("Backend error");
+
+          const jobsData = await res.json();
+          console.log("Live data:", jobsData);
+
+          setJobs(
+            jobsData.map((j: any) => ({
+              id: j.id,
+              status: j.status,
+              backend: j.backend || "unknown",
+              submitted: j.created || "unknown",
+              user: j.user || "You",
+              elapsed_time: j.usage_seconds || 0,
+              qpu_seconds: j.usage_seconds || 0,
+              logs: [],
+              results: null,
+              status_history: [],
+            }))
+          );
+
+          // ✅ Metrics calculation
+          const liveJobs = jobsData.filter((j: any) =>
+            ["RUNNING", "QUEUED"].includes(j.status)
+          ).length;
+
+          const completedJobs = jobsData.filter((j: any) => j.status === "COMPLETED").length;
+          const successRate =
+            jobsData.length > 0 ? (completedJobs / jobsData.length) * 100 : 0;
+
+          setMetrics({
+            live_jobs: liveJobs,
+            avg_wait_time: 60, // 🔧 Dummy for now (sec) → improve later
+            success_rate: successRate,
+            open_sessions: 1,
+          });
+
+          // ✅ Chart data from statuses
+          const statusCounts: { [key: string]: number } = {};
+          jobsData.forEach((j: any) => {
+            statusCounts[j.status] = (statusCounts[j.status] || 0) + 1;
+          });
+
+          setChartData([
+            {
+              time: new Date().toLocaleTimeString(),
+              COMPLETED: statusCounts["COMPLETED"] || 0,
+              RUNNING: statusCounts["RUNNING"] || 0,
+              QUEUED: statusCounts["QUEUED"] || 0,
+              ERROR: statusCounts["ERROR"] || 0,
+            },
+          ]);
+        } catch (err) {
+          console.error("Live fetch failed:", err);
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Failed to fetch live data.",
+          });
+        }
       }
+
       setLastUpdated(new Date())
-    } catch (error) {
-      console.error("Failed to fetch data:", error)
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to fetch dashboard data.",
-      })
     } finally {
       setIsFetching(false)
     }

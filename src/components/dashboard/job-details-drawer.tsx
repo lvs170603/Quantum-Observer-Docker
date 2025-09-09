@@ -76,7 +76,7 @@ export function JobDetailsDrawer({ job, isOpen, onOpenChange }: JobDetailsDrawer
           <div>
             <h4 className="font-semibold text-sm mb-2">Logs</h4>
             <pre className="p-2 bg-muted rounded-md text-xs font-code overflow-x-auto">
-              <code>{job.logs}</code>
+              <code>{job.logs || "No logs available."}</code>
             </pre>
           </div>
 
@@ -85,7 +85,11 @@ export function JobDetailsDrawer({ job, isOpen, onOpenChange }: JobDetailsDrawer
           <div>
             <h4 className="font-semibold text-sm mb-2">Results</h4>
             <pre className="p-2 bg-muted rounded-md text-xs font-code overflow-x-auto">
-              <code>{Object.keys(job.results).length > 0 ? JSON.stringify(job.results, null, 2) : "No results available."}</code>
+              <code>
+                {job.results && Object.keys(job.results).length > 0
+                  ? JSON.stringify(job.results, null, 2)
+                  : "No results available."}
+              </code>
             </pre>
           </div>
         </div>
