@@ -1,0 +1,12 @@
+# Node.js
+node_modules/
+.next/
+dist/
+
+# Python venv
+venv/
+__pycache__/
+*.pyc
+
+# Environment files
+.env
